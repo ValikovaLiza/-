@@ -34,6 +34,7 @@ def fibon(a, b, L, eps):
         F[1] = 1
         for i in range(2,n):
             F[i] = F[i-1] + F[i-2]
+            
         x1 = a + (F[n-2]/F[n-1])*L
         x2 = b - (F[n-2]/F[n-1])*L
 
@@ -63,6 +64,7 @@ print("Метод Фибоначчи: ", fibon(a,b,L,eps))
 
 def sechen(a, b, L):
     #t = (1+ math.sqrt(5))/2
+    #Отношение длин интервалов
     t = 0.618
     while L>eps:
         x1 = a + L*t
@@ -70,6 +72,8 @@ def sechen(a, b, L):
 
         res1 = func(x1)
         res2 = func(x2)
+
+        #сохраняется 1 из и интервалов, в котором расположен оставшийся эксперимент
 
         if res1 > res2: 
             b=x1
