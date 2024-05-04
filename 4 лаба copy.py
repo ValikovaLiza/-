@@ -1,53 +1,43 @@
-#Метод Штрафных Функций
 import numpy as np
 
-# Определение функции цели
+# Целевая функция
 def objective_function(x):
     return 4 * x[0] - x[1]**2 - 12
 
-# Определение ограничений
-def constraint1(x):
+# Ограничения
+def constraint(x):
     return 10 * x[0] - x[0]**2 + 10 * x[1] - x[1]**2 - 34
 
-# Определение штрафных функций
-def penalty_function(x, t):
-    return t * max(0, constraint1(x))**2
+# Функция градиента целевой функции
+def gradient_objective_function(x):
+    return np.array([4, -2 * x[1]])
 
-# Определение градиента целевой функции
-def gradient_objective(x):
-    dfdx0 = 4
-    dfdx1 = -2 * x[1]
-    return np.array([dfdx0, dfdx1])
-
-# Определение градиента ограничения
+# Функция градиента ограничений
 def gradient_constraint(x):
-    dfdx0 = 10 - 2 * x[0]
-    dfdx1 = 10 - 2 * x[1]
-    return np.array([dfdx0, dfdx1])
+    return np.array([10 - 2 * x[0], 10 - 2 * x[1]])
 
-# Метод штрафных функций
-def penalty_method(x0, eps, t0, mu, max_iter=1000):
-    x = np.array(x0)
-    t = t0
-    for _ in range(max_iter):
-        grad_obj = gradient_objective(x)
-        grad_con = gradient_constraint(x)
-        grad_penalty = grad_obj + mu * grad_con  # Градиент штрафной функции
-        if np.linalg.norm(grad_penalty) < eps:
-            break
-        x = x - grad_penalty / np.linalg.norm(grad_penalty)  # Градиентный спуск
-        t *= mu  # Увеличиваем коэффициент штрафа
-    return x
+# Функция для метода барьерных функций
+def barrier_method(x0, eps):
+    mu = 1  # Параметр барьера
+    t = 10  # Параметр для увеличения mu
+
+    while constraint(x0) < 0:
+        x = x0
+        while np.linalg.norm(gradient_objective_function(x)) > eps:
+            x = x - (1 / mu) * gradient_objective_function(x)
+        x0 = x
+        mu *= t  # Увеличиваем mu
+
+    return x0
 
 # Начальное приближение
-x0 = [2, 4]
+x0 = np.array([2, 4])
 # Точность
 eps = 0.05
-# Начальное значение коэффициента штрафа
-t0 = 1
-# Множитель увеличения коэффициента штрафа
-mu = 2
 
-# Запуск метода штрафных функций
-result = penalty_method(x0, eps, t0, mu)
-print("Значение функции цели в решении:", objective_function(result))
+# Вызов метода барьерных функций
+result = barrier_method(x0, eps)
+
+print("Минимум функции:", result)
+print("Значение целевой функции в минимуме:", objective_function(result))
+
