@@ -38,6 +38,5 @@ eps = 0.05
 # Вызов метода барьерных функций
 result = barrier_method(x0, eps)
 
-print("Минимум функции:", result)
 print("Значение целевой функции в минимуме:", objective_function(result))
 
